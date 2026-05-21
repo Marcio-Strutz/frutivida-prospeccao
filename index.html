@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍹 Prospecção Frutivida – Zona Oeste SP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:#2D7A3A; --green-light:#4CAF63; --green-pale:#E8F5EB;
+    --orange:#E8760A; --orange-pale:#FFF3E5; --yellow:#F5C842;
+    --red-pale:#FFF0EE; --red:#D94F3D; --blue-pale:#EEF4FF; --blue:#3A6FD4;
+    --bg:#F5F2EC; --card:#FFFFFF; --text:#1A1A1A; --muted:#6B6B6B; --border:#E0DAD0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  /* HEADER */
+  header{background:var(--green);color:white;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.2);}
+  .header-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  header h1{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.3px;}
+  header p{font-size:11px;opacity:0.75;margin-top:1px;}
+  .stats-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .stat{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,0.14);border-radius:8px;padding:5px 11px;}
+  .stat strong{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;line-height:1;}
+  .stat span{font-size:10px;opacity:0.8;margin-top:1px;}
+  .progress-bar-wrap{background:rgba(255,255,255,0.2);border-radius:10px;height:4px;width:110px;overflow:hidden;margin-top:3px;}
+  .progress-bar-fill{height:100%;background:var(--yellow);border-radius:10px;transition:width 0.4s;}
+  .meta-label{font-size:10px;opacity:0.7;}
+  .header-buttons{display:flex;gap:7px;}
+  .btn-header{background:rgba(255,255,255,0.14);color:white;border:1.5px solid rgba(255,255,255,0.3);border-radius:7px;padding:6px 13px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:background 0.2s;white-space:nowrap;}
+  .btn-header:hover{background:rgba(255,255,255,0.26);}
+  .btn-header.dirty{background:#E8760A;border-color:#E8760A;animation:pulse 1.5s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
+
+  /* MAIN */
+  main{padding:14px 13px;max-width:960px;margin:0 auto;}
+  #search-input{width:100%;padding:9px 13px;border-radius:9px;border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;background:white;outline:none;transition:border-color 0.15s;margin-bottom:10px;}
+  #search-input:focus{border-color:var(--green);}
+  .filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px;}
+  .filter-btn{border:1.5px solid var(--border);border-radius:18px;padding:4px 11px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all 0.13s;background:var(--card);color:var(--muted);}
+  .filter-btn.active,.filter-btn:hover{background:var(--green);color:white;border-color:var(--green);}
+
+  /* CARDS */
+  .card{background:var(--card);border-radius:12px;border:1.5px solid var(--border);margin-bottom:8px;overflow:hidden;transition:box-shadow 0.18s,transform 0.13s;}
+  .card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.07);transform:translateY(-1px);}
+  .card-header{display:flex;align-items:flex-start;gap:10px;padding:12px 14px 8px;}
+  .priority-badge{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;flex-shrink:0;margin-top:2px;}
+  .p-alta .priority-badge{background:var(--green-pale);color:var(--green);}
+  .p-media .priority-badge{background:var(--orange-pale);color:var(--orange);}
+  .p-baixa .priority-badge{background:var(--blue-pale);color:var(--blue);}
+  .card-info{flex:1;min-width:0;}
+  .card-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;line-height:1.2;margin-bottom:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+  .card-address{font-size:11px;color:var(--muted);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card-meta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+  .rating-chip{background:var(--yellow);color:#5A3800;font-size:10px;font-weight:600;border-radius:5px;padding:2px 6px;}
+  .type-chip{background:var(--green-pale);color:var(--green);font-size:10px;font-weight:500;border-radius:5px;padding:2px 6px;}
+  .status-pill{font-size:10px;font-weight:600;border-radius:5px;padding:2px 7px;}
+  .pill-pendente{background:#F0F0F0;color:#888;}
+  .pill-contatado{background:#FFF8DC;color:#9A6E00;}
+  .pill-reuniao{background:var(--green-pale);color:var(--green);}
+  .pill-fechado{background:var(--green);color:white;}
+  .pill-sem-interesse{background:var(--red-pale);color:var(--red);}
+  .status-contatado{border-left:4px solid var(--yellow);}
+  .status-reuniao{border-left:4px solid var(--green-light);}
+  .status-fechado{border-left:4px solid var(--green);background:linear-gradient(135deg,#f8fffa,white);}
+  .status-sem-interesse{border-left:4px solid var(--red);opacity:0.6;}
+  .has-note-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);display:inline-block;}
+
+  /* ACTIONS */
+  .card-actions{display:flex;gap:5px;padding:0 14px 10px;flex-wrap:wrap;align-items:center;}
+  .btn{display:inline-flex;align-items:center;gap:3px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;border:none;text-decoration:none;transition:all 0.13s;white-space:nowrap;}
+  .btn-whats{background:#25D366;color:white;} .btn-whats:hover{background:#1ebe5d;}
+  .btn-phone{background:var(--green-pale);color:var(--green);border:1.5px solid #B8DFC0;}
+  .btn-grey{background:#F0F0F0;color:#555;border:1.5px solid #DDD;} .btn-grey:hover{background:#E4E4E4;}
+  .btn-note{background:#F0F0F0;color:#555;border:1.5px solid #DDD;}
+  .btn-note.has-note{background:#FFF3E5;color:#B05A00;border-color:#F0C080;}
+  .btn-danger{background:#FFE8E8;color:var(--red);border:1.5px solid #FFB3B3;}
+  .btn-edit{background:#E8F5EB;color:var(--green);border:1.5px solid #B8DFC0;}
+  .status-select{background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:5px 6px;cursor:pointer;margin-left:auto;}
+
+  /* NOTES */
+  .notes-area{padding:0 14px 10px;display:none;}
+  .notes-area.open{display:block;}
+  .notes-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;}
+  .notes-input{width:100%;min-height:58px;border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);background:#FAFAF8;resize:vertical;outline:none;transition:border-color 0.15s;line-height:1.5;}
+  .notes-input:focus{border-color:var(--green);}
+  .notes-input::placeholder{color:#C0C0C0;font-style:italic;}
+  .notes-saved{font-size:10px;color:var(--green);margin-top:3px;height:12px;}
+
+  /* SCRIPT */
+  .script-area{display:none;background:#F9F8F5;border-top:1.5px solid var(--border);padding:10px 14px;}
+  .script-area.open{display:block;}
+  .script-label{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+  .script-text{background:white;border:1.5px solid #D8EDD8;border-radius:7px;padding:8px 38px 8px 10px;font-size:12px;line-height:1.6;color:#333;font-style:italic;position:relative;}
+  .copy-btn{position:absolute;top:6px;right:6px;background:var(--green);color:white;border:none;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .script-tip{margin-top:5px;font-size:10px;color:var(--muted);line-height:1.4;}
+
+  /* SECTION TITLE */
+  .section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;display:flex;align-items:center;gap:7px;}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+  .no-results{text-align:center;padding:32px 20px;color:var(--muted);font-size:13px;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:white;padding:11px 15px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-size:12px;font-weight:600;z-index:1000;opacity:0;transform:translateY(10px);transition:all 0.25s;}
+  .toast.show{opacity:1;transform:translateY(0);}
+
+  /* MODAL */
+  .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center;}
+  .modal.open{display:flex;}
+  .modal-content{background:white;border-radius:12px;padding:22px;max-width:480px;width:92%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+  .modal-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin-bottom:14px;}
+  .form-group{margin-bottom:12px;}
+  .form-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;display:block;}
+  .form-input,.form-select,.form-textarea{width:100%;padding:7px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;transition:border-color 0.15s;}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--green);}
+  .form-textarea{resize:vertical;min-height:70px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+  .btn-primary{background:var(--green);color:white;border:none;font-size:12px;} .btn-primary:hover{background:var(--green-light);}
+  .btn-secondary{background:#F0F0F0;color:#555;border:1.5px solid #DDD;font-size:12px;}
+
+  /* STATUS BAR BOTTOM - mobile hint */
+  .save-hint{text-align:center;font-size:10px;color:var(--muted);padding:6px;background:var(--green-pale);border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div>
+      <h1>🍹 Prospecção Frutivida</h1>
+      <p>Buffets – Zona Oeste SP &nbsp;·&nbsp; <span id="total-count">0</span> contatos</p>
+    </div>
+    <div class="stats-bar">
+      <div class="stat">
+        <strong id="fechados-count">0</strong><span>Fechados</span>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="meta-bar" style="width:0%"></div></div>
+        <span class="meta-label">meta: 10</span>
+      </div>
+      <div class="stat"><strong id="contatados-count">0</strong><span>Contatados</span></div>
+      <div class="stat"><strong id="pendentes-count">0</strong><span>Pendentes</span></div>
+      <div class="header-buttons">
+        <button class="btn-header" onclick="openAddModal()">➕ Novo</button>
+        <button class="btn-header" id="save-btn" onclick="exportarCSV()">📤 Exportar</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <input type="text" id="search-input" placeholder="🔍  Buscar por nome ou bairro..." oninput="renderCards()">
+  <div class="filters">
+    <button class="filter-btn active" onclick="filterCards('todos',this)">Todos</button>
+    <button class="filter-btn" onclick="filterCards('alta',this)">🔥 Alta</button>
+    <button class="filter-btn" onclick="filterCards('media',this)">⚡ Média</button>
+    <button class="filter-btn" onclick="filterCards('baixa',this)">📋 Baixa</button>
+    <button class="filter-btn" onclick="filterCards('pendente',this)">⏳ Pendentes</button>
+    <button class="filter-btn" onclick="filterCards('contatado',this)">📱 Contatados</button>
+    <button class="filter-btn" onclick="filterCards('reuniao',this)">🤝 Reunião</button>
+    <button class="filter-btn" onclick="filterCards('fechado',this)">✅ Fechados</button>
+    <button class="filter-btn" onclick="filterCards('sem-interesse',this)">❌ Sem interesse</button>
+    <button class="filter-btn" onclick="filterCards('com-nota',this)">📝 Com anotação</button>
+  </div>
+  <div id="cards-container"></div>
+</main>
+
+<div class="save-hint">💾 Dados salvos automaticamente no navegador — use sempre o mesmo dispositivo/navegador</div>
+
+<!-- Modal -->
+<div class="modal" id="contactModal">
+  <div class="modal-content">
+    <div class="modal-title" id="modalTitle">Novo Contato</div>
+    <form id="contactForm" onsubmit="salvarContato(event)">
+      <div class="form-group"><label class="form-label">Nome do Buffet *</label><input type="text" class="form-input" id="fNome" required></div>
+      <div class="form-group"><label class="form-label">Telefone *</label><input type="text" class="form-input" id="fTelefone" placeholder="11999999999" required></div>
+      <div class="form-group"><label class="form-label">Endereço</label><input type="text" class="form-input" id="fEndereco"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Tipo</label><input type="text" class="form-input" id="fTipo" placeholder="Buffet Infantil"></div>
+        <div class="form-group"><label class="form-label">Prioridade</label>
+          <select class="form-select" id="fPrioridade">
+            <option value="alta">🔥 Alta</option><option value="media">⚡ Média</option><option value="baixa">📋 Baixa</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Rating</label><input type="number" class="form-input" id="fRating" step="0.1" min="0" max="5"></div>
+        <div class="form-group"><label class="form-label">Nº Avaliações</label><input type="number" class="form-input" id="fAvaliacoes"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Horário</label><input type="text" class="form-input" id="fHorario" placeholder="Seg–Sex 10h–18h"></div>
+      <div class="form-group"><label class="form-label">Justificativa / Observação</label><textarea class="form-textarea" id="fJustificativa"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DADOS BASE
+// ═══════════════════════════════════════════════════════
+const BUFFETS_BASE = [
+  {nome:"Buffet Planeta Kids – Pompéia",telefone:"11915671004",endereco:"Av. Pompéia, 1603 – Perdizes",rating:4.2,avaliacoes:1083,prioridade:"alta",tipo:"Buffet Infantil",horario:"Seg–Sex 10h30–18h30, Sáb até 12h",justificativa:"1.083 avaliações — maior operação da lista. Nota mais baixa = oportunidade de padronização de bebidas."},
+  {nome:"Buffet Uriel – Osasco",telefone:"11947475004",endereco:"R. General Florêncio, 868 – Quitaúna, Osasco",rating:4.8,avaliacoes:724,prioridade:"alta",tipo:"Buffet Infantil",horario:"Ter–Sex 13h–21h, Sáb 10h–17h",justificativa:"4.8 com 724 avaliações. Osasco = menos concorrência de fornecedores da capital."},
+  {nome:"Buffet Viva Vida",telefone:"1137272408",endereco:"Av. Corifeu de Azevedo Marques, 161 – Butantã",rating:4.6,avaliacoes:655,prioridade:"alta",tipo:"Buffet Infantil",horario:"Seg–Dom 8h–19h (7 dias!)",justificativa:"655 avaliações, aberto 7 dias/semana = rotatividade altíssima."},
+  {nome:"Estrelato Kids Buffet – Vila São Francisco",telefone:"11964069557",endereco:"Av. Corifeu de Azevedo Marques, 6100 – Vila São Francisco",rating:4.9,avaliacoes:631,prioridade:"alta",tipo:"Buffet Infantil",horario:"Seg–Dom 10h–18h",justificativa:"4.9 com 631 avaliações. Grande operação. Volume de bebidas muito alto."},
+  {nome:"Estrelato Kids Buffet – 2ª Unidade",telefone:"11945442708",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"alta",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Segunda unidade do Estrelato. Fechar as duas em sequência é estratégico."},
+  {nome:"Circo Mágico Buffet Infantil",telefone:"11999178538",endereco:"Av. Queiroz Filho, 800 – Vila Hamburguesa",rating:4.8,avaliacoes:474,prioridade:"alta",tipo:"Buffet Infantil",horario:"Todos os dias 11h–16h",justificativa:"Aberto 7 dias. Alto consumo de bebidas ininterrupto."},
+  {nome:"The Village Buffet",telefone:"1138628344",endereco:"R. Clélia, 1402 – Lapa",rating:4.6,avaliacoes:531,prioridade:"alta",tipo:"Buffet / Eventos",horario:"Seg–Sex 10h30–19h, Sáb até 16h",justificativa:"531 avaliações, forte na Lapa. Eventos de adultos = potencial para xaropes e chocolates."},
+  {nome:"Buffet Espaço Vila da Arte",telefone:"1143249082",endereco:"R. Carlos Vicari, 327 – Perdizes",rating:4.6,avaliacoes:411,prioridade:"alta",tipo:"Buffet Infantil",horario:"Seg–Dom 9h30–22h30",justificativa:"Aberto todos os dias até 22h30. Operação muito intensa."},
+  {nome:"VillAlegre Buffet e Eventos",telefone:"11994755610",endereco:"Av. Imperatriz Leopoldina, 515 – Vila Leopoldina",rating:4.8,avaliacoes:254,prioridade:"media",tipo:"Buffet Infantil",horario:"Ter–Sex 9h–18h, Sáb 9h–15h, Dom 9h–17h",justificativa:"Donos citados pelo nome — decisor muito acessível."},
+  {nome:"Buffet Spasso Dourado Kids",telefone:"1139743665",endereco:"Av. Marquês de S. Vicente, 1584 – Perdizes",rating:4.8,avaliacoes:299,prioridade:"media",tipo:"Buffet Infantil",horario:"Seg–Sex 10h–19h, Sáb até 12h",justificativa:"Espaço amplo, múltiplas festas simultâneas = alto consumo."},
+  {nome:"Espaço Boo!",telefone:"11972366511",endereco:"R. Nossa Sra. da Lapa, 747 – Lapa",rating:4.4,avaliacoes:464,prioridade:"media",tipo:"Buffet Infantil",horario:"Seg–Sex 10h–19h, Sáb até 20h",justificativa:"Perfil sofisticado. Xaropes premium e Blue Curaçau são o argumento."},
+  {nome:"Buffet Magic Moment",telefone:"11991396690",endereco:"R. Pio XI, 1185 – Alto da Lapa",rating:4.3,avaliacoes:390,prioridade:"media",tipo:"Buffet Infantil",horario:"Seg 9h–18h30, Ter–Sáb 9h30–18h30",justificativa:"Nota mais baixa = dor operacional. Argumento de padronização tem encaixe direto."},
+  {nome:"Buffet Family · Butantã Raposo",telefone:"11987930881",endereco:"R. Prof. Máximo Ribeiro Nunes, 135 – Butantã",rating:4.8,avaliacoes:205,prioridade:"media",tipo:"Buffet Infantil",horario:"Ter–Sex 13h–19h",justificativa:"Avaliações destacam bebidas — se importam com qualidade."},
+  {nome:"Espaço Infantil Alecrim",telefone:"11933999530",endereco:"R. Dr. Emílio Ribas, 110 – Perdizes",rating:4.9,avaliacoes:78,prioridade:"media",tipo:"Buffet Infantil",horario:"Seg–Sex 10h–18h",justificativa:"Nota 4.9. Foco em qualidade. Bom para chocolates e chás."},
+  {nome:"Cedrom Buffet e Eventos",telefone:"11981334995",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Dois contatos — confirmar se são unidades diferentes."},
+  {nome:"Cedrom Buffet e Eventos – 2º contato",telefone:"1137193315",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Segundo número do Cedrom."},
+  {nome:"Zezé e Lelé Buffet",telefone:"11965949255",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Nome familiar = decisor acessível."},
+  {nome:"Toca do Panda",telefone:"11939614878",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Temático com personagem = alto volume de crianças."},
+  {nome:"Espaço Thor Buffet",telefone:"11978568441",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Temático super-heróis. Refresco Blue Curaçau azul = perfeito para o tema."},
+  {nome:"Infinity Gastronomia",telefone:"11972312834",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet / Gastronomia",horario:"Verificar no contato",justificativa:"Foco em qualidade. Xaropes artesanais e chocolates têm boa recepção."},
+  {nome:"Buffet Lá no Quintal",telefone:"11999961666",endereco:"Zona Oeste – SP",rating:4.5,avaliacoes:164,prioridade:"media",tipo:"Buffet / Eventos",horario:"Seg–Sex 9h–16h, Sáb 9h–11h30",justificativa:"Estilo descontraído. Refrescos e xaropes têm encaixe perfeito."},
+  {nome:"Espaço Formigueiro",telefone:"11945058447",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Perfil infantil. Alto consumo de refrescos."},
+  {nome:"Buffet Espaço Leopoldina",telefone:"11947646232",endereco:"Vila Leopoldina – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Vila Leopoldina = classe média-alta. Bom potencial para produtos diferenciados."},
+  {nome:"Serenata Kids Buffet",telefone:"11940320123",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Especializado em kids. Alta frequência de festas."},
+  {nome:"Buffet Villa Ballon",telefone:"11947399938",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Nome festivo. Boa oportunidade para venda do pacote completo."},
+  {nome:"Buffet Ciranda in Villa",telefone:"11941849264",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Perfil kids/festivo. Amostra de refresco tem alta taxa de conversão."},
+  {nome:"Alladin Buffet",telefone:"11976918000",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Temático = crianças em quantidade. Refrescos coloridos são destaque visual."},
+  {nome:"Buffet Akela I",telefone:"11968900572",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Temático aventura. Mesmo perfil de alto consumo de bebidas."},
+  {nome:"Buffet Magic Osasco",telefone:"11980449001",endereco:"Osasco – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Osasco = menos concorrência. Boa janela para ser fornecedor preferencial."},
+  {nome:"Buffet Kids Mania",telefone:"11994781822",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Alto volume esperado. Argumento de rendimento do galão (35L por galão 5L)."},
+  {nome:"Tataplay Buffet",telefone:"11931000732",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Play/infantil. Alta demanda por bebidas."},
+  {nome:"Balloon Magic Children's Buffet",telefone:"1134327721",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Nome em inglês = posicionamento diferenciado."},
+  {nome:"Alegria & Alegria Buffet",telefone:"11979953150",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Perfil festivo = bebidas coloridas se alinham ao nome."},
+  {nome:"Buffet Alegria & Cia",telefone:"11995929074",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"media",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Mesmo perfil festivo. Primeiro pedido com condição especial é o argumento."},
+  {nome:"Flor de Mandacaru",telefone:"11941503066",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Nome nordestino = temático. Explorar sabores regionais do catálogo."},
+  {nome:"Buffet Villa do Sol",telefone:"11981950073",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Levar amostra de refresco cítrico (combina com o nome)."},
+  {nome:"Buffet Fábrica da Alegria",telefone:"11912026369",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Perfil kids. Abordagem padrão com amostra."},
+  {nome:"Espaço Play Buffet",telefone:"11947040891",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Play/kids. Pode ser novo = boa janela para ser o primeiro fornecedor."},
+  {nome:"Buffet Zureta",telefone:"11984622895",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Nome descontraído. Abordagem direta e informal funciona melhor."},
+  {nome:"Buffet Madeira",telefone:"11949562286",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Confirmar segmento no primeiro contato."},
+  {nome:"Neves Buffet",telefone:"11993079308",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Buffet familiar. Abordagem pessoal com amostra."},
+  {nome:"Buffet Espaço Galático",telefone:"11960767865",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Temático espacial. Refresco Blue Curaçau (azul) perfeito para o tema."},
+  {nome:"Buffet Batoon",telefone:"11973605075",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Menor porte. Bom para testar e afinar o discurso."},
+  {nome:"Buffet Pavanelli",telefone:"11987550799",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Nome de família = dono é o decisor. Abordagem pessoal é a mais eficaz."},
+  {nome:"Buffet Quintal da Vovó",telefone:"11989069295",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Perfil acolhedor. Chocolate quente e chás têm boa recepção."},
+  {nome:"Buffet Pizza Party Brazil",telefone:"11995578906",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Xaropes e refrescos são complemento natural para as bebidas do evento."},
+  {nome:"Espaço Mariah",telefone:"1136835595",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Confirmar foco (infantil/adulto/corporativo) antes de ligar."},
+  {nome:"Buffet Etc & Tal Osasco",telefone:"11980143645",endereco:"Osasco – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Osasco = menor concorrência."},
+  {nome:"Come and Go Buffet",telefone:"11993807585",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet Móvel",horario:"Verificar no contato",justificativa:"A domicílio. Galão de refresco é a solução ideal."},
+  {nome:"Villa da Alegria",telefone:"11933251435",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Espaço de eventos variados. Abordagem padrão com amostra."},
+  {nome:"Buffet Estação Folia",telefone:"11997608181",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Festivo. Xaropes para drinks coloridos têm boa recepção."},
+  {nome:"Espaço Halo",telefone:"1136810655",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Confirmar segmento no contato."},
+  {nome:"Buffet and Party Space",telefone:"11959663813",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Nome em inglês = posicionamento diferenciado."},
+  {nome:"Buffet Shallon – Espaço D'Luccas",telefone:"11974367267",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Verificar no contato",justificativa:"Dois nomes = verificar quem gerencia bebidas."},
+  {nome:"Buffet Cat Sapeka",telefone:"11950392714",endereco:"Zona Oeste – SP",rating:null,avaliacoes:null,prioridade:"baixa",tipo:"Buffet Infantil",horario:"Verificar no contato",justificativa:"Temático com animal = kids. Perfil padrão de consumo de refrescos."},
+  {nome:"Sabor & Tentação – Buffet a Domicílio",telefone:"11975178507",endereco:"Vila Osasco, Osasco – SP",rating:4.9,avaliacoes:150,prioridade:"baixa",tipo:"Buffet Móvel",horario:"Seg–Sáb 8h–20h",justificativa:"4.9 estrelas. A domicílio = galão prático para transporte."},
+  {nome:"Buffet Quintal da Vila",telefone:"11952173305",endereco:"Av. Dr. Cardoso de Melo, 610 – Vila Olímpia",rating:4.9,avaliacoes:81,prioridade:"baixa",tipo:"Buffet Infantil",horario:"Seg–Sáb 10h–18h",justificativa:"Vila Olímpia = público premium. Produtos diferenciados têm boa receptividade."},
+  {nome:"No Galão – Pinheiros",telefone:"1130978848",endereco:"R. Fernão Dias, 161 – Pinheiros",rating:4.7,avaliacoes:490,prioridade:"baixa",tipo:"Eventos",horario:"Seg–Sáb 8h–18h",justificativa:"Perfil corporativo/adulto. Hot Cream Chocolate e xaropes para drinks."},
+  {nome:"Buffet Hora do Break – Carapicuíba",telefone:"11949836132",endereco:"Estr. Onda Verde, 1296 – Carapicuíba",rating:5.0,avaliacoes:77,prioridade:"baixa",tipo:"Buffet / Eventos",horario:"Seg–Dom 9h–22h",justificativa:"Nota 5.0. Carapicuíba = menos concorrência."},
+  {nome:"VIPS Buffet Eventos – Osasco",telefone:"11992633656",endereco:"Av. Hildebrando de Lima, 861 – Osasco",rating:5.0,avaliacoes:16,prioridade:"baixa",tipo:"Eventos",horario:"Seg–Sex 9h30–19h, Sáb até 17h",justificativa:"Bar com drinks — entrada pelos xaropes e bebidas sem álcool."},
+  {nome:"Sol Buffet Eventos – Osasco",telefone:"11947773076",endereco:"Av. Hildebrando de Lima, 240 – Osasco",rating:4.5,avaliacoes:8,prioridade:"baixa",tipo:"Eventos",horario:"Verificar no contato",justificativa:"Novo no mercado. Ainda sem fornecedores fixos."}
+];
+
+// ═══════════════════════════════════════════════════════
+// INDEXEDDB — persistência real, funciona online/offline
+// ═══════════════════════════════════════════════════════
+const DB_NAME = 'frutivida_db', DB_VER = 1, STORE = 'dados';
+let db, buffets = [...BUFFETS_BASE], statusMap = {}, notesMap = {};
+let currentFilter = 'todos', editingIndex = -1;
+
+function abrirDB() {
+  return new Promise((ok, fail) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(STORE, {keyPath:'id'});
+    req.onsuccess = e => { db = e.target.result; ok(); };
+    req.onerror = () => fail(req.error);
+  });
+}
+
+function dbGet(id) {
+  return new Promise(ok => {
+    const tx = db.transaction(STORE,'readonly');
+    const req = tx.objectStore(STORE).get(id);
+    req.onsuccess = () => ok(req.result ? req.result.val : null);
+    req.onerror = () => ok(null);
+  });
+}
+
+function dbPut(id, val) {
+  return new Promise(ok => {
+    const tx = db.transaction(STORE,'readwrite');
+    tx.objectStore(STORE).put({id, val});
+    tx.oncomplete = ok;
+  });
+}
+
+async function carregarDados() {
+  const s = await dbGet('statusMap');
+  const n = await dbGet('notesMap');
+  const b = await dbGet('buffets');
+  if (s) statusMap = s;
+  if (n) notesMap  = n;
+  if (b && Array.isArray(b) && b.length >= BUFFETS_BASE.length) buffets = b;
+}
+
+async function salvarDados() {
+  await dbPut('statusMap', statusMap);
+  await dbPut('notesMap',  notesMap);
+  await dbPut('buffets',   buffets);
+}
+
+// ═══════════════════════════════════════════════════════
+// SCRIPTS WPP
+// ═══════════════════════════════════════════════════════
+function getScript(b) {
+  const s = {
+    alta:`Oi, tudo bem? 😊 Vi o *${b.nome}* no Google Maps e fiquei bem impressionado com a reputação de vocês!\n\nTrabalho com a *Frutivida (Escudero Natural)* — 30 anos de mercado. Temos refrescos em galão 5L que rendem 35 litros já diluídos (proporção 6x1). Numa festa com 80 crianças, resolve tudo em segundos, sem funcionário parado fazendo suco.\n\nPosso mostrar como funciona em 5 minutinhos? Tenho amostra pra vocês degustarem, sem compromisso. 🍹`,
+    media:`Olá! Tudo certo? 😊 Encontrei o *${b.nome}* e vi as ótimas avaliações — parabéns!\n\nRepresento a *Frutivida* e trabalho com bebidas prontas para buffets: refrescos, xaropes, limonadas e chocolate quente. Um galão de 5L rende 35 litros já diluído — preparo rápido e sabor sempre igual.\n\nConsigo ajustar a condição para o primeiro pedido. Faz sentido bater um papo rápido? 🍋`,
+    baixa:`Oi, bom dia! 😊 Vi o *${b.nome}* e gostaria de apresentar uma solução de bebidas para buffets e eventos.\n\nTrabalho com a *Frutivida* — refrescos em galão 5L (rende 35L diluído), xaropes para limonadas e drinks, e chocolate quente cremoso. Tudo prático e de alto rendimento.\n\nTenho amostra pra vocês experimentarem sem compromisso! Posso passar aí? 🙂`
+  };
+  return s[b.prioridade] || s.baixa;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════
+const PILL_LBL={pendente:'⏳ Pendente',contatado:'📱 Contatado',reuniao:'🤝 Reunião',fechado:'✅ Fechado','sem-interesse':'❌ Sem interesse'};
+const PILL_CLS={pendente:'pill-pendente',contatado:'pill-contatado',reuniao:'pill-reuniao',fechado:'pill-fechado','sem-interesse':'pill-sem-interesse'};
+const PRIO_SYM={alta:'★',media:'⚡',baixa:'○'};
+const GRP_LBL={alta:'🔥 Alta Prioridade — Foco Imediato',media:'⚡ Média Prioridade — Semana 2',baixa:'📋 Baixa Prioridade — Semana 3+'};
+function esc(s){const d=document.createElement('div');d.textContent=String(s||'');return d.innerHTML;}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  const search = document.getElementById('search-input').value.toLowerCase().trim();
+  const groups = {alta:[],media:[],baixa:[]};
+
+  buffets.forEach((b,idx) => {
+    const status = statusMap[b.nome]||'pendente';
+    const noteVal = notesMap[b.nome]||'';
+    const hasNote = noteVal.trim()!=='';
+    let pass = true;
+    if (currentFilter==='alta'||currentFilter==='media'||currentFilter==='baixa') pass = b.prioridade===currentFilter;
+    else if (currentFilter==='com-nota') pass = hasNote;
+    else if (currentFilter!=='todos') pass = status===currentFilter;
+    if (search && !b.nome.toLowerCase().includes(search) && !(b.endereco||'').toLowerCase().includes(search) && !noteVal.toLowerCase().includes(search)) pass=false;
+    if (pass) groups[b.prioridade].push({b,idx,status,noteVal,hasNote});
+  });
+
+  ['alta','media','baixa'].forEach(prio => {
+    if (!groups[prio].length) return;
+    const ttl=document.createElement('div');
+    ttl.className='section-title';
+    ttl.innerHTML=`${GRP_LBL[prio]} <span style="font-size:10px;font-weight:400;margin-left:4px">(${groups[prio].length})</span>`;
+    container.appendChild(ttl);
+
+    groups[prio].forEach(({b,idx,status,noteVal,hasNote}) => {
+      const card=document.createElement('div');
+      card.className=`card p-${b.prioridade} status-${status}`;
+      const waNum=b.telefone?b.telefone.replace(/\D/g,''):'';
+      const waLink=waNum?`https://wa.me/55${waNum}?text=${encodeURIComponent(getScript(b))}`:'';
+      const sId=`sc-${idx}`, nId=`nt-${idx}`;
+      card.innerHTML=`
+        <div class="card-header">
+          <div class="priority-badge">${PRIO_SYM[b.prioridade]}</div>
+          <div class="card-info">
+            <div class="card-name">${esc(b.nome)}${hasNote?'<span class="has-note-dot" title="Tem anotação"></span>':''}</div>
+            <div class="card-address">📍 ${esc(b.endereco||'Endereço a confirmar')}</div>
+            <div class="card-meta">
+              ${b.rating?`<span class="rating-chip">⭐ ${b.rating} (${Number(b.avaliacoes).toLocaleString('pt-BR')})</span>`:'<span class="rating-chip" style="background:#EEE;color:#999">Sem avaliação</span>'}
+              <span class="type-chip">${esc(b.tipo)}</span>
+              <span class="status-pill ${PILL_CLS[status]}">${PILL_LBL[status]}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          ${waLink?`<a class="btn btn-whats" href="${waLink}" target="_blank">💬 WhatsApp</a>`:''}
+          ${waNum?`<a class="btn btn-phone" href="tel:+55${waNum}">📞 Ligar</a>`:''}
+          <button class="btn btn-grey" onclick="toggleArea('${sId}',this,'📝 Script','📝 Fechar')">📝 Script</button>
+          <button class="btn btn-note${hasNote?' has-note':''}" onclick="toggleArea('${nId}',this,'📋 Anotar','📋 Fechar',true)">${hasNote?'📋 Ver nota':'📋 Anotar'}</button>
+          <button class="btn btn-edit" onclick="abrirEditar(${idx})">✏️</button>
+          <button class="btn btn-danger" onclick="excluir(${idx})">🗑️</button>
+          <select class="status-select" onchange="atualizarStatus(${idx},this.value)">
+            <option value="pendente" ${status==='pendente'?'selected':''}>⏳ Pendente</option>
+            <option value="contatado" ${status==='contatado'?'selected':''}>📱 Contatado</option>
+            <option value="reuniao" ${status==='reuniao'?'selected':''}>🤝 Reunião</option>
+            <option value="fechado" ${status==='fechado'?'selected':''}>✅ Fechado!</option>
+            <option value="sem-interesse" ${status==='sem-interesse'?'selected':''}>❌ Sem interesse</option>
+          </select>
+        </div>
+        <div class="notes-area" id="${nId}">
+          <div class="notes-label">📋 Anotações / Retorno / Observações</div>
+          <textarea class="notes-input" placeholder="Ex: Retornar sexta às 14h · Falar com o responsável · Aguardar retorno..." rows="3" oninput="salvarNota(${idx},this)">${esc(noteVal)}</textarea>
+          <div class="notes-saved" id="ns-${idx}"></div>
+        </div>
+        <div class="script-area" id="${sId}">
+          <div class="script-label">💬 Mensagem de WhatsApp — copie e envie</div>
+          <div class="script-text">${esc(getScript(b)).replace(/\n/g,'<br>')}
+            <button class="copy-btn" onclick="copiar(${idx})">Copiar</button>
+          </div>
+          <div class="script-tip">🕐 ${esc(b.horario||'')} &nbsp;·&nbsp; 💡 ${esc(b.justificativa||'')}</div>
+        </div>`;
+      container.appendChild(card);
+    });
+  });
+
+  if (!container.querySelector('.card')) container.innerHTML='<div class="no-results">Nenhum buffet encontrado.</div>';
+  document.getElementById('total-count').textContent=buffets.length;
+  updateStats();
+}
+
+// ═══════════════════════════════════════════════════════
+// AÇÕES
+// ═══════════════════════════════════════════════════════
+function toggleArea(id,btn,lblOff,lblOn,foco){
+  const el=document.getElementById(id); if(!el)return;
+  el.classList.toggle('open');
+  btn.textContent=el.classList.contains('open')?lblOn:lblOff;
+  if(el.classList.contains('open')&&foco){const ta=el.querySelector('textarea');if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}}
+}
+
+async function atualizarStatus(idx,val){
+  const b=buffets[idx]; if(!b)return;
+  statusMap[b.nome]=val;
+  await salvarDados();
+  // Atualiza só o pill e borda sem recriar card
+  document.querySelectorAll('.card-actions select').forEach(sel=>{
+    const fn=sel.getAttribute('onchange')||'';
+    if(fn.includes(`(${idx},`)){
+      const c=sel.closest('.card');
+      if(c){
+        c.className=c.className.replace(/status-\S+/,`status-${val}`);
+        const pill=c.querySelector('.status-pill');
+        if(pill){pill.className=`status-pill ${PILL_CLS[val]}`;pill.textContent=PILL_LBL[val];}
+      }
+    }
+  });
+  updateStats();
+  toast('Status atualizado! ✓');
+}
+
+async function salvarNota(idx,ta){
+  const b=buffets[idx]; if(!b)return;
+  notesMap[b.nome]=ta.value;
+  await salvarDados();
+  const ns=document.getElementById(`ns-${idx}`);
+  if(ns){ns.textContent='✓ Salvo automaticamente';clearTimeout(ns._t);ns._t=setTimeout(()=>ns.textContent='',2500);}
+  const card=ta.closest('.card');
+  if(card){
+    const name=card.querySelector('.card-name');
+    let dot=name.querySelector('.has-note-dot');
+    if(ta.value.trim()){if(!dot){dot=document.createElement('span');dot.className='has-note-dot';dot.title='Tem anotação';name.appendChild(dot);}}
+    else{if(dot)dot.remove();}
+    const btn=card.querySelector('.btn-note');
+    if(btn){btn.classList.toggle('has-note',ta.value.trim()!=='');btn.textContent=ta.value.trim()?'📋 Ver nota':'📋 Anotar';}
+  }
+}
+
+function copiar(idx){
+  const b=buffets[idx]; if(!b)return;
+  navigator.clipboard.writeText(getScript(b)).then(()=>{
+    const btn=document.querySelector(`#sc-${idx} .copy-btn`);
+    if(btn){const o=btn.textContent;btn.textContent='✓ Copiado!';setTimeout(()=>btn.textContent=o,1600);}
+  });
+}
+
+function updateStats(){
+  const vals=Object.values(statusMap);
+  const fechados=vals.filter(v=>v==='fechado').length;
+  const contatados=vals.filter(v=>v==='contatado'||v==='reuniao').length;
+  const semP=vals.filter(v=>v&&v!=='pendente').length;
+  document.getElementById('fechados-count').textContent=fechados;
+  document.getElementById('contatados-count').textContent=contatados;
+  document.getElementById('pendentes-count').textContent=buffets.length-semP;
+  document.getElementById('meta-bar').style.width=Math.min(100,(fechados/10)*100)+'%';
+}
+
+function filterCards(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+}
+
+function toast(msg,dur=2000){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// Exportar CSV para enviar ao gerente
+function exportarCSV(){
+  const rows=[['Nome','Telefone','Endereço','Tipo','Prioridade','Status','Avaliação','Anotações']];
+  buffets.forEach(b=>{
+    rows.push([
+      b.nome, b.telefone||'', b.endereco||'', b.tipo||'', b.prioridade,
+      statusMap[b.nome]||'pendente', b.rating||'',
+      (notesMap[b.nome]||'').replace(/\n/g,' ')
+    ]);
+  });
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='prospecção_frutivida.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('📤 CSV exportado! Envie para seu gerente.');
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════
+function openAddModal(){editingIndex=-1;document.getElementById('modalTitle').textContent='Novo Contato';document.getElementById('contactForm').reset();document.getElementById('contactModal').classList.add('open');}
+function abrirEditar(idx){
+  editingIndex=idx; const b=buffets[idx];
+  document.getElementById('modalTitle').textContent='Editar Contato';
+  document.getElementById('fNome').value=b.nome;
+  document.getElementById('fTelefone').value=b.telefone||'';
+  document.getElementById('fEndereco').value=b.endereco||'';
+  document.getElementById('fTipo').value=b.tipo||'';
+  document.getElementById('fPrioridade').value=b.prioridade;
+  document.getElementById('fRating').value=b.rating||'';
+  document.getElementById('fAvaliacoes').value=b.avaliacoes||'';
+  document.getElementById('fHorario').value=b.horario||'';
+  document.getElementById('fJustificativa').value=b.justificativa||'';
+  document.getElementById('contactModal').classList.add('open');
+}
+function fecharModal(){document.getElementById('contactModal').classList.remove('open');editingIndex=-1;}
+async function salvarContato(e){
+  e.preventDefault();
+  const novo={nome:document.getElementById('fNome').value.trim(),telefone:document.getElementById('fTelefone').value.trim(),endereco:document.getElementById('fEndereco').value.trim(),tipo:document.getElementById('fTipo').value.trim(),prioridade:document.getElementById('fPrioridade').value,rating:document.getElementById('fRating').value?parseFloat(document.getElementById('fRating').value):null,avaliacoes:document.getElementById('fAvaliacoes').value?parseInt(document.getElementById('fAvaliacoes').value):null,horario:document.getElementById('fHorario').value.trim(),justificativa:document.getElementById('fJustificativa').value.trim()};
+  if(editingIndex===-1){buffets.push(novo);toast('✅ Contato adicionado!');}
+  else{buffets[editingIndex]=novo;toast('✅ Contato atualizado!');}
+  await salvarDados();
+  fecharModal(); renderCards();
+}
+async function excluir(idx){
+  if(!confirm('Excluir este contato?'))return;
+  const nome=buffets[idx].nome; buffets.splice(idx,1);
+  delete statusMap[nome]; delete notesMap[nome];
+  await salvarDados(); renderCards(); toast('🗑️ Contato excluído.');
+}
+document.addEventListener('click',e=>{if(e.target.id==='contactModal')fecharModal();});
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+abrirDB().then(carregarDados).then(renderCards).catch(err=>{
+  console.error(err);
+  renderCards(); // renderiza mesmo sem IndexedDB
+});
+</script>
+</body>
+</html>
